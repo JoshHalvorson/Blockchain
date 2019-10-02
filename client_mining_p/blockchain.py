@@ -116,7 +116,7 @@ class Blockchain(object):
         guess_hash = hashlib.sha256(guess).hexdigest()
         #print(guess_hash)
         
-        return guess_hash[:3] == '000000'
+        return guess_hash[:6] == '000000'
 
     def valid_chain(self, chain):
         """

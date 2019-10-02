@@ -35,7 +35,7 @@ def valid_proof(block_string, proof):
     guess_hash = hashlib.sha256(guess).hexdigest()
     #print(guess_hash)
     
-    return guess_hash[:3] == '000000'
+    return guess_hash[:6] == '000000'
 
 if __name__ == '__main__':
     # What node are we interacting with?
@@ -64,5 +64,5 @@ if __name__ == '__main__':
         # print the message from the server.
         if mine_request.json()['message'] == 'New Block Forged':
             coins_mined += 1
-            print('Coines mined: ', coins_mined)
+            print('Coins mined: ', coins_mined)
         pass
