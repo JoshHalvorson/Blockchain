@@ -138,7 +138,7 @@ class Blockchain(object):
         guess = f'{block_string}{proof}'.encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
         # TODO: Change back to six zeroes
-        return guess_hash[:4] == "0000"
+        return guess_hash[:2] == "00"
 
     def valid_chain(self, chain):
         """
@@ -184,6 +184,7 @@ def mine():
     last_block_string = json.dumps(last_block, sort_keys=True).encode()
     values = request.get_json()
     submitted_proof = values['proof']
+    miner_id = values['miner_id']
     if not blockchain.valid_proof(last_block_string, submitted_proof):
         # TODO: Send different message if proof was valid but late
         response = {
@@ -196,7 +197,7 @@ def mine():
     # The amount is 1 coin as a reward for mining the next block
     blockchain.new_transaction(
         sender="0",
-        recipient=node_identifier,
+        recipient=miner_id,
         amount=1,
     )
     # Forge the new Block by adding it to the chain
@@ -340,5 +341,5 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
     else:
-        port = 5000
+        port = 5002
     app.run(host='0.0.0.0', port=port)

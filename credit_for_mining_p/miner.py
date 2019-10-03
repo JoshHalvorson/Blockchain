@@ -2,7 +2,7 @@ import hashlib
 import requests
 import json
 import sys
-
+from uuid import uuid4
 
 # TODO: Implement functionality to search for a proof
 def proof_of_work(block):
@@ -36,15 +36,26 @@ def valid_proof(block_string, proof):
     guess_hash = hashlib.sha256(guess).hexdigest()
     # print(guess_hash)
 
-    return guess_hash[:6] == '000000'
+    return guess_hash[:2] == '00'
 
 
 if __name__ == '__main__':
+    try:
+        with open('my_id.txt', 'r') as f:
+            miner_id = f.readline().strip()
+    except FileNotFoundError:
+        new_m_id = str(uuid4()).replace('-', '')
+        with open('my_id.txt', 'a+') as f:
+            f.write(new_m_id)
+            f.flush()
+            f.seek(0)
+            miner_id = f.readline().strip()
+
     # What node are we interacting with?
     if len(sys.argv) > 1:
         node = sys.argv[1]
     else:
-        node = "http://localhost:5000"
+        node = "http://localhost:5002"
 
     coins_mined = 0
     # Run forever until interrupted
@@ -57,7 +68,7 @@ if __name__ == '__main__':
         # TODO: When found, POST it to the server {"proof": new_proof}
         # TODO: We're going to have to research how to do a POST in Python
         # HINT: Research `requests` and remember we're sending our data as JSON
-        json_proof = {'proof': new_proof, }
+        json_proof = {'proof': new_proof, "miner_id": miner_id}
 
         mine_request = requests.post(url=node + '/mine', json=json_proof)
         # print(mine_request.json()['message'])
